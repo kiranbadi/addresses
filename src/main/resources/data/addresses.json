@@ -6,7 +6,6 @@
   "zipCode": "27560",
   "latitude": "100.98",
   "longitude": "-102.32",
-  "nearestLandmark": "Harris teeter",
   "fullName": "Kiran Badi",
   "phoneNumber": "6462013101",
   "address": {
@@ -27,6 +26,7 @@
       "front door",
       "back door",
       "side porch",
+      "porch",
       "garage",
       "mail room",
       "property staff",
@@ -35,12 +35,13 @@
       "concierge",
       "doorman",
       "security",
+      "lobby",
       "gate",
       "other",
       "no preference"
     ],
     "packageDeliveryInstructions": "some instructions",
-    "ungroupDays": {
+    "groupDays": {
       "ungroupWeekDays": true,
       "weekdays": {
         "monday": {
@@ -152,7 +153,8 @@
       "gateCode": "some gate code",
       "callBox": "some call box"
     },
-    "additionalInstructions": "some additional instructions"
+    "additionalInstructions": "some additional instructions",
+    "nearestLandmark": "Harris teeter"
   }
 }
 
