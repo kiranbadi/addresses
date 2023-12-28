@@ -1,12 +1,16 @@
 package com.vasanti.web;
 
+import brave.Tracer;
 import com.vasanti.web.addresses.client.AddressClient;
 import com.vasanti.web.addresses.model.address;
 import com.vasanti.web.addresses.service.AddressServiceQueries;
+import lombok.AllArgsConstructor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
+import org.springframework.context.annotation.Bean;
 
 import java.util.List;
 
@@ -17,8 +21,19 @@ public class AddressesApplication {
 
 	private final AddressServiceQueries addressServiceQueries;
 
-	public AddressesApplication(AddressServiceQueries addressServiceQueries) {
+	private final Tracer tracer;
+
+	@Autowired
+	public AddressesApplication(AddressServiceQueries addressServiceQueries,
+								Tracer tracer) {
 		this.addressServiceQueries = addressServiceQueries;
+		this.tracer = tracer;
+	}
+
+
+	@Bean
+	public Tracer tracer(){
+		return tracer;
 	}
 
 

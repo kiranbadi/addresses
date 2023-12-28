@@ -47,7 +47,7 @@ public class NettyWebServerCustomizer implements WebServerFactoryCustomizer<Nett
         ssl.setKeyStorePassword(sslKeyStorepassword);
         Http2 http2 = new Http2();
         http2.setEnabled(false);
-        factory.addServerCustomizers(new SslServerCustomizer(ssl, http2, null));
+        factory.setHttp2(http2);
         factory.setPort(sslPort);
 
     }
