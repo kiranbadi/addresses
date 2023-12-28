@@ -19,7 +19,7 @@ public class AddressRouters {
                 .route(RequestPredicates.GET("/test")
                         .and(RequestPredicates
                                 .accept(MediaType.TEXT_PLAIN)),
-                        addressController::TestSetUp);
+                        request -> addressController.TestSetUp());
     }
 
 }

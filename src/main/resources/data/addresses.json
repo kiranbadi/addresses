@@ -1,0 +1,163 @@
+{
+  "addressId": 1,
+  "city": "morrisville",
+  "state": "North Carolina",
+  "country": "US",
+  "zipCode": "27560",
+  "latitude": "100.98",
+  "longitude": "-102.32",
+  "nearestLandmark": "Harris teeter",
+  "fullName": "Kiran Badi",
+  "phoneNumber": "6462013101",
+  "address": {
+    "houseNumber": "some house number",
+    "street": "some street "
+  },
+  "isPrimaryAddress": false,
+  "addressType": [
+    "House",
+    "Commercial",
+    "Townhouse",
+    "Apartment",
+    "Business",
+    "Other"
+  ],
+  "deliveryInstructions": {
+    "packageDeliveryLocation": [
+      "front door",
+      "back door",
+      "side porch",
+      "garage",
+      "mail room",
+      "property staff",
+      "leasing office",
+      "front desk",
+      "concierge",
+      "doorman",
+      "security",
+      "gate",
+      "other",
+      "no preference"
+    ],
+    "packageDeliveryInstructions": "some instructions",
+    "ungroupDays": {
+      "ungroupWeekDays": true,
+      "weekdays": {
+        "monday": {
+          "isOpen24Hours": true,
+          "isClosedForDelivery": false,
+          "DailyHours": {
+            "start-time": [
+              "12:00 AM",
+              ".. 12:00 AM"
+            ],
+            "end-time": [
+              "12:00 AM",
+              ".. 12:00 AM"
+            ]
+          }
+        },
+        "tuesday": {
+          "isOpen24Hours": true,
+          "isClosedForDelivery": false,
+          "DailyHours": {
+            "start-time": [
+              "12:00 AM",
+              ".. 12:00 AM"
+            ],
+            "end-time": [
+              "12:00 AM",
+              ".. 12:00 AM"
+            ]
+          }
+        },
+        "wednesday": {
+          "isOpen24Hours": true,
+          "isClosedForDelivery": false,
+          "DailyHours": {
+            "start-time": [
+              "12:00 AM",
+              ".. 12:00 AM"
+            ],
+            "end-time": [
+              "12:00 AM",
+              ".. 12:00 AM"
+            ]
+          }
+        },
+        "thursday": {
+          "isOpen24Hours": true,
+          "isClosedForDelivery": false,
+          "DailyHours": {
+            "start-time": [
+              "12:00 AM",
+              ".. 12:00 AM"
+            ],
+            "end-time": [
+              "12:00 AM",
+              ".. 12:00 AM"
+            ]
+          }
+        },
+        "friday": {
+          "isOpen24Hours": true,
+          "isClosedForDelivery": false,
+          "DailyHours": {
+            "start-time": [
+              "12:00 AM",
+              ".. 12:00 AM"
+            ],
+            "end-time": [
+              "12:00 AM",
+              ".. 12:00 AM"
+            ]
+          }
+        }
+      },
+      "ungroupWeekEnds": true,
+      "weekends": {
+          "saturday": {
+            "isOpen24Hours": true,
+            "isClosedForDelivery": false,
+            "DailyHours": {
+              "start-time": [
+                "12:00 AM",
+                ".. 12:00 AM"
+              ],
+              "end-time": [
+                "12:00 AM",
+                ".. 12:00 AM"
+              ]
+            }
+          },
+          "sunday": {
+            "isOpen24Hours": true,
+            "isClosedForDelivery": false,
+            "DailyHours": {
+              "start-time": [
+                "12:00 AM",
+                ".. 12:00 AM"
+              ],
+              "end-time": [
+                "12:00 AM",
+                ".. 12:00 AM"
+              ]
+            }
+          }
+        }
+    },
+    "securityInstructions": {
+      "securityCode": "1234",
+      "keyFlob": "some key flob",
+      "gateCode": "some gate code",
+      "callBox": "some call box"
+    },
+    "additionalInstructions": "some additional instructions"
+  }
+}
+
+
+
+
+
+

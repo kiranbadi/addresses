@@ -31,3 +31,10 @@ build/
 
 ### VS Code ###
 .vscode/
+
+### docker related files ###
+mongo-data/
+postgres-data/
+rabbitmq-data/
+rabbitmq-log/
+

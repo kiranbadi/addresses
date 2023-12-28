@@ -46,4 +46,4 @@ USER "rabbitmq"
 # CMD "/docker-entrypoint.sh"
 ENTRYPOINT ["docker-entrypoint.sh"]
 CMD ["rabbitmq-server"]
-© 2021 GitHub, Inc.
+
