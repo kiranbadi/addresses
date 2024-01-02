@@ -42,3 +42,22 @@ insert into address_book.package_delivery_location (location_name, created_by, u
 values ('other', 'system', 'system');
 insert into address_book.package_delivery_location (location_name, created_by, updated_by)
 values ('no preference', 'system', 'system');
+
+create table address_book.package_delivery_location
+(
+    location_id   bigserial
+        primary key,
+    location_name varchar(100)
+        constraint package_delivery_location_pk
+            unique,
+    created_at    timestamp with time zone default CURRENT_TIMESTAMP,
+    updated_at    timestamp with time zone default CURRENT_TIMESTAMP,
+    deleted_at    timestamp with time zone,
+    created_by    varchar(100),
+    updated_by    varchar(100)
+);
+
+alter table address_book.package_delivery_location
+    owner to kiran;
+
+
