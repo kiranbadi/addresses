@@ -12,6 +12,8 @@ CREATE TABLE IF NOT EXISTS address_book.account_address_detail
     phone_number VARCHAR(20) NOT NULL,
     house_number VARCHAR(10) NOT NULL,
     street       VARCHAR(50) NOT NULL,
+    latitude NUMERIC(9, 6),
+    longitude NUMERIC(9, 6),
     is_primary   BOOLEAN NOT NULL DEFAULT FALSE,
     address_type VARCHAR(20) NOT NULL,
     created_at   TIMESTAMP   NOT NULL DEFAULT NOW(),

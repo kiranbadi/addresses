@@ -3,18 +3,24 @@ services:
   postgres:
     image: postgres:15.0
     container_name: addresses-store
-    restart: always
+    restart: no
     ports:
       - "5432:5432"
     environment:
       POSTGRES_USER: kiran
       POSTGRES_PASSWORD: kiran
       POSTGRES_DB: postgres
+    command: ['postgres', '-c', 'wal_level=logical']
     volumes:
-      - ./postgres-data:/var/lib/postgresql/data
-      - ./postgres-init:/docker-entrypoint-initdb.d
-      - ./postgres-config:/etc/postgresql
-      - ./postgres-log:/var/log/postgresql
+      - /Users/kiran/docker/postgresql/postgres-data:/var/lib/postgresql/data
+      - /Users/kiran/docker/postgresql/postgres-init:/docker-entrypoint-initdb.d
+      - /Users/kiran/docker/postgresql/postgres-config/:/etc/postgresql
+      - /Users/kiran/docker/postgresql/postgres-log:/var/log/postgresql
+    healthcheck:
+      test: ['CMD', 'psql', '-U', 'postgres', '-c', 'SELECT 1']
+      start_period: 10s
+      interval: 10s
+      timeout: 5s
 
   zookeeper:
     image: 'wurstmeister/zookeeper:3.4.6'
@@ -24,18 +30,45 @@ services:
       - "2181:2181"
     environment:
       - ALLOW_ANONYMOUS_LOGIN=yes
-  kafka:
-    image: 'wurstmeister/kafka:3.6.2'
+      - ZOOKEEPER_CLIENT_PORT=2181
+      - ZOOKEEPER_TICK_TIME=2000
+    healthcheck:
+      test: echo srvr | nc zookeeper 2181 || exit 1
+      start_period: 10s
+      interval: 10s
+      timeout: 5s
+      retries: 3
+  broker:
+    image: 'bitnami/kafka:latest'
+    restart: always
     ports:
       - "9092:9092"
+      - "29092:29092"
+      - "9101:9101"
     environment:
       - KAFKA_BROKER_ID=1
+      - KAFKA_ZOOKEEPER_CONNECT=zookeeper:2181
+      - KAFKA_LISTENER_SECURITY_PROTOCOL_MAP=PLAINTEXT:PLAINTEXT,PLAINTEXT_HOST:PLAINTEXT
       - KAFKA_LISTENERS=PLAINTEXT://:9092
       - KAFKA_ADVERTISED_LISTENERS=PLAINTEXT://127.0.0.1:9092
-      - KAFKA_ZOOKEEPER_CONNECT=zookeeper:2181
       - ALLOW_PLAINTEXT_LISTENER=yes
+      - KAFKA_OFFSETS_TOPIC_REPLICATION_FACTOR=1
+      - KAFKA_TRANSACTION_STATE_LOG_MIN_ISR=1
+      - KAFKA_TRANSACTION_STATE_LOG_REPLICATION_FACTOR=1
+      - KAFKA_GROUP_INITIAL_REBALANCE_DELAY_MS=0
+      - KAFKA_AUTO_CREATE_TOPICS_ENABLE=true
+      - KAFKA_JMX_PORT=9101
+      - KAFKA_JMX_HOSTNAME=localhost
     depends_on:
-      - zookeeper
+      zookeeper:
+        condition: service_healthy
+    healthcheck:
+      test: nc -z localhost 9092 || exit -1
+      start_period: 15s
+      interval: 5s
+      timeout: 10s
+      retries: 10
+
 
   mongo:
     image: mongo:7.0.0
@@ -43,14 +76,19 @@ services:
     restart: always
     ports:
       - "27017:27017"
-    environment:
-      MONGO_INITDB_ROOT_USERNAME: kiran
-      MONGO_INITDB_ROOT_PASSWORD: kiran
+    extra_hosts:
+      - "host.docker.internal:host-gateway"
+    healthcheck:
+      test: echo "try { rs.status() } catch (err) { rs.initiate({_id:'rs0',members:[{_id:0,host:'host.docker.internal:27017'}]}) }" | mongosh --port 27017 --quiet
+      interval: 5s
+      timeout: 30s
+      start_period: 0s
+      retries: 30
     volumes:
-      - ./mongo-data:/data/db
-      - ./mongo-init:/docker-entrypoint-initdb.d
-      - ./mongo-config:/etc/mongo
-      - ./mongo-log:/var/log/mongo
+      - /Users/kiran/docker/mongodb/mongo-data:/data/db
+      - /Users/kiran/docker/mongodb/mongo-init:/docker-entrypoint-initdb.d
+      - /Users/kiran/docker/mongodb/mongo-config:/etc/mongo
+      - /Users/kiran/docker/mongodb/mongo-log:/var/log/mongo
 
   rabbitmq:
     image: rabbitmq:3.9.10-management
@@ -63,6 +101,81 @@ services:
       RABBITMQ_DEFAULT_USER: kiran
       RABBITMQ_DEFAULT_PASS: kiran
     volumes:
-      - ./rabbitmq-data:/var/lib/rabbitmq
-      - ./rabbitmq-config:/etc/rabbitmq
-      - ./rabbitmq-log:/var/log/rabbitmq
+      - /Users/kiran/docker/rabbitmq/rabbitmq-data:/var/lib/rabbitmq
+      - /Users/kiran/docker/rabbitmq/rabbitmq-config:/etc/rabbitmq
+      - /Users/kiran/docker/rabbitmq/rabbitmq-log:/var/log/rabbitmq
+
+
+  debezium:
+    image: debezium/connect:2.4.2.Final
+    restart: always
+    container_name: debezium
+    hostname: debezium
+    depends_on:
+      postgres:
+        condition: service_healthy
+      broker:
+        condition: service_healthy
+    ports:
+      - '8083:8083'
+    environment:
+        BOOTSTRAP_SERVERS: broker:9092
+        GROUP_ID: 1
+        CONFIG_STORAGE_TOPIC: debezium-configs
+        OFFSET_STORAGE_TOPIC: debezium-offsets
+        STATUS_STORAGE_TOPIC: debezium-status
+        CONFIG_STORAGE_REPLICATION_FACTOR: 1
+        OFFSET_STORAGE_REPLICATION_FACTOR: 1
+        STATUS_STORAGE_REPLICATION_FACTOR: 1
+        OFFSET_FLUSH_INTERVAL_MS: 60000
+        OFFSET_FLUSH_TIMEOUT_MS: 5000
+        REST_ADVERTISED_HOST_NAME: debezium
+        REST_PORT: 8083
+        REST_HOST_NAME: localhost
+        REST_ADVERTISED_PORT: 8083
+        KEY_CONVERTER: org.apache.kafka.connect.json.JsonConverter
+        VALUE_CONVERTER: org.apache.kafka.connect.json.JsonConverter
+        ENABLE_DEBEZIUM_TRANSFORMER: 'true'
+        ENABLE_DEBEZIUM_SCRIPTING: 'true'
+    healthcheck:
+      test: [
+          'CMD',
+          'curl',
+          '--silent',
+          '--fail',
+          '-X',
+          'GET',
+          'http://localhost:8083/connectors',
+        ]
+      start_period: 10s
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  rest-proxy:
+    image: confluentinc/cp-kafka-rest:7.3.1
+    depends_on:
+      broker:
+        condition: service_healthy
+    ports:
+      - '8082:8082'
+    hostname: rest-proxy
+    container_name: rest-proxy
+    environment:
+      KAFKA_REST_HOST_NAME: rest-proxy
+      KAFKA_REST_BOOTSTRAP_SERVERS: 'broker:29092'
+      KAFKA_REST_LISTENERS: 'http://0.0.0.0:8082'
+
+  debezium-ui:
+    platform: linux/x86_64
+    image: debezium/debezium-ui:2.4
+    restart: always
+    container_name: debezium-ui
+    hostname: debezium-ui
+    depends_on:
+      debezium:
+        condition: service_healthy
+    ports:
+      - '8080:8080'
+    environment:
+      KAFKA_CONNECT_URIS: http://debezium:8083
