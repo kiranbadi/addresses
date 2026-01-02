@@ -3,8 +3,8 @@ package com.vasanti.web.addresses.controller;
 
 import brave.Span;
 import brave.Tracer;
+import com.vasanti.web.addresses.model.Address;
 import com.vasanti.web.addresses.model.ResponseModel;
-import com.vasanti.web.addresses.model.address;
 import com.vasanti.web.addresses.service.AddressService;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -57,13 +57,14 @@ public class AddressController {
     @NewSpan
     @PostMapping("/save")
     @ResponseBody
-    public Mono<ResponseModel> insertAddress(@RequestBody address addr) {
-        Mono<address> adr =  addressService.insert(addr);
+    public Mono<ResponseModel> insertAddress(@RequestBody Address addr) {
+        Mono<Address> adr =  addressService.insert(addr);
         return TransformAddress(adr);
     }
 
   /*Added a manual trace and span to measure response. Annotation does not work  */
-    public Mono<ResponseModel> TransformAddress(Mono<address>adr){
+    @SuppressWarnings("unused")
+    public Mono<ResponseModel> TransformAddress(Mono<Address>adr){
         ResponseModel model  = new ResponseModel();
         Span returnResponseModel = tracer.nextSpan().name("returnResponseModel").start();
         try (Tracer.SpanInScope ws = tracer.withSpanInScope(returnResponseModel.start())) {
@@ -87,7 +88,7 @@ public class AddressController {
 
     @GetMapping("/{id}")
     @ResponseBody
-    public Mono<address> getAddress(@PathVariable String id) {
+    public Mono<Address> getAddress(@PathVariable String id) {
         return addressService.findById(id);
     }
 
@@ -95,22 +96,22 @@ public class AddressController {
     @GetMapping("/find/{addressid}")
     @ResponseBody
     @NewSpan
-    public Mono<address> getAddress(@PathVariable Long addressid) {
-        return addressService.findByaddressid(addressid);
+    public Mono<Address> getAddress(@PathVariable Long addressid) {
+        return addressService.findByAddressId(addressid);
     }
 
 
     @GetMapping("/alladdresses")
     @ResponseBody
     @NewSpan
-    public Flux<address> getAllAddress() {
+    public Flux<Address> getAllAddress() {
            return addressService.findAll();
     }
 
     @GetMapping("/all/{state}/{page}/{size}")
     @ResponseBody
     @NewSpan
-    public Flux<address> FindAllAddress(@PathVariable String state,
+    public Flux<Address> FindAllAddress(@PathVariable String state,
                                         @PathVariable int page,
                                         @PathVariable int size) {
         log.info("page is {}, size is {} ,state is {} ",page,size,state);
@@ -121,7 +122,7 @@ public class AddressController {
     @GetMapping("/findall/{city}")
     @ResponseBody
     @NewSpan
-    public Flux<address> FindAllByCityCtrl(@PathVariable String city,@RequestParam(defaultValue = "0") int page, @RequestParam(defaultValue = "10") int size) {
+    public Flux<Address> FindAllByCityCtrl(@PathVariable String city, @RequestParam(defaultValue = "0") int page, @RequestParam(defaultValue = "10") int size) {
         Pageable pageable = PageRequest.of(page, size);
         return addressService.findAllByCity(city,pageable);
     }
@@ -129,8 +130,8 @@ public class AddressController {
     //TODO: POST MAPPING NEEDS TO RETURN VALID MESSAGE NOT ALL LIST
     @PostMapping("/bulksave")
     @ResponseBody
-    public Flux<address> saveall(@RequestBody List<address> addresses) {
-        return addressService.saveAll(addresses);
+    public Flux<Address> saveall(@RequestBody List<Address> Addresses) {
+        return addressService.saveAll(Addresses);
     }
 
     @GetMapping(value = "/send/{msg}")
@@ -145,7 +146,7 @@ public class AddressController {
     /** Default Span used here **/
     @NewSpan
     @PostMapping(value = "/amqp/create")
-    public String sendAddress(@RequestBody address addr) {
+    public String sendAddress(@RequestBody Address addr) {
         log.info("Sending message to the request queue.");
         // convert address object to json string and pass it to queue
         rabbitTemplate.convertAndSend(requestBinding.getExchange(), requestBinding.getRoutingKey(), addr);

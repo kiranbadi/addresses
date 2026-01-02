@@ -38,3 +38,7 @@ postgres-data/
 rabbitmq-data/
 rabbitmq-log/
 
+### macOS ###
+.DS_Store
+src/.DS_Store
+

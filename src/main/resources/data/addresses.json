@@ -145,7 +145,40 @@
               ]
             }
           }
+        },
+      "federalHolidays": {
+        "federalHolidayList" : [
+            "New Year's Day",
+            "Martin Luther King Jr. Day",
+            "Presidents' Day",
+             "Good Friday",
+            "Memorial Day",
+            "Independence Day",
+            "Friday after July 4th",
+            "Labor Day",
+            "Thanksgiving Day",
+            "Day after Thanksgiving",
+            "Columbus Day",
+            "Veterans Day",
+            "Thanksgiving Day",
+            "Christmas Day",
+            "Christmas Eve",
+            "Day after Christmas",
+             "New Year's Eve"
+        ],
+        "isOpen24Hours": true,
+        "isClosedForDelivery": false,
+        "DailyHours": {
+          "start-time": [
+            "12:00 AM",
+            ".. 12:00 AM"
+          ],
+          "end-time": [
+            "12:00 AM",
+            ".. 12:00 AM"
+          ]
         }
+      }
     },
     "securityInstructions": {
       "securityCode": "1234",

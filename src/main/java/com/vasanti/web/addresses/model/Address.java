@@ -11,7 +11,7 @@ import java.io.Serializable;
 @Getter
 @Setter
 @Document(collection = "addresses")
-public class address implements Serializable {
+public class Address implements Serializable {
 
     @Id
     private String id;
