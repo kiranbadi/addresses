@@ -1,0 +1,16 @@
+version: '3.8'
+services:
+  postgres-pg-vector:
+    image: pgvector/pgvector:pg17
+    container_name: pg-vector
+    environment:
+      POSTGRES_USER: kiran
+      POSTGRES_PASSWORD: kiran
+      POSTGRES_DB: testdb
+    ports:
+      - "5433:5432"
+    volumes:
+      - pg-vector-data:/var/lib/postgresql/data
+    restart: always
+volumes:
+  pg-vector-data:
