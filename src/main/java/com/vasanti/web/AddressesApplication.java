@@ -2,7 +2,7 @@ package com.vasanti.web;
 
 import brave.Tracer;
 import com.vasanti.web.addresses.client.AddressClient;
-import com.vasanti.web.addresses.model.address;
+import com.vasanti.web.addresses.model.Address;
 import com.vasanti.web.addresses.service.AddressServiceQueries;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -45,7 +45,7 @@ public class AddressesApplication {
 	@SuppressWarnings("unused")
 	public void run(String... args) {
 		log.info("-----\nQUERY: All Addresses {}", Arrays.toString(args));
-		List<address> allcities = this.addressServiceQueries
+		List<Address> allcities = this.addressServiceQueries
 				.findAll("city", 0, 10);
 		allcities.forEach(System.out::println);
 

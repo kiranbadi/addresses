@@ -38,7 +38,7 @@ services:
       - zookeeper
 
   mongo:
-    image: mongo:6.0.12
+    image: mongo:7.0.0
     container_name: mongo
     restart: always
     ports:

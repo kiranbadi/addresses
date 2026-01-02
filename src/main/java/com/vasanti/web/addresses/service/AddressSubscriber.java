@@ -2,7 +2,7 @@ package com.vasanti.web.addresses.service;
 
 import brave.Span;
 import brave.Tracer;
-import com.vasanti.web.addresses.model.address;
+import com.vasanti.web.addresses.model.Address;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.amqp.core.Queue;
@@ -49,14 +49,14 @@ public class AddressSubscriber {
 
     /** Custom method level Span used here **/
     @RabbitListener(queues = "#{queueRequest.getName()}")
-    public void processRequest(address addr) {
+    public void processRequest(Address addr) {
         LOGGER.info("Listening messages from the queue {}" ,queueRequest.getName());
         LOGGER.info("Received the following message from the request queue \n " + addr + "");
         try {
             LOGGER.info("Inserting data into the database and adding span");
             Span saveAddressSpan = tracer.nextSpan().name("saveAddressSpan").start();
             try (Tracer.SpanInScope ws = tracer.withSpanInScope(saveAddressSpan.start())) {
-                Mono<address> resAddr = addressService.insert(addr);
+                Mono<Address> resAddr = addressService.insert(addr);
                 LOGGER.info("Response from  database {}",resAddr.subscribe(value -> LOGGER.info("Record inserted into database : \n " + value)));
                 LOGGER.info("Inside saveAddressSpan tracer");
             } finally {

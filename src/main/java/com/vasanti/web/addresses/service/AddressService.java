@@ -1,6 +1,6 @@
 package com.vasanti.web.addresses.service;
 
-import com.vasanti.web.addresses.model.address;
+import com.vasanti.web.addresses.model.Address;
 import org.springframework.cloud.sleuth.annotation.NewSpan;
 import org.springframework.data.domain.Pageable;
 import reactor.core.publisher.Flux;
@@ -10,34 +10,34 @@ import java.util.List;
 
 public interface AddressService {
     @NewSpan
-    Mono<address> insert(address addr);
+    Mono<Address> insert(Address addr);
 
     @NewSpan
-    Flux<address> saveAll(List<address> cities);
+    Flux<Address> saveAll(List<Address> cities);
 
     @NewSpan
-    Mono<address> findById(String id);
+    Mono<Address> findById(String id);
 
     @NewSpan
-    Mono<address> findByaddressid(Long addressid);
+    Mono<Address> findByAddressId(Long addressid);
 
     @NewSpan
-    Flux<address> findAll();
+    Flux<Address> findAll();
 
     @NewSpan
-    Flux<address> findAllByState(String state,Pageable pageable);
+    Flux<Address> findAllByState(String state, Pageable pageable);
 
     @NewSpan
-    Flux<address> findAllByCity(String city, Pageable pageable);
+    Flux<Address> findAllByCity(String city, Pageable pageable);
 
     @NewSpan
     Mono<Void> deleteAll();
 
     @NewSpan
-    Mono<Void> deleteByaddressid(Long addressid);
+    Mono<Void> deleteByAddressId(Long addressid);
 
     @NewSpan
-    Mono<Void> updateByaddressid(Long addressid);
+    Mono<Void> updateByAddressId(Long addressid);
 
 
 }
